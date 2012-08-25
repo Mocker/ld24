@@ -172,6 +172,7 @@ function connection(socket,controller) {
 	var m = controller;
 	var s = socket;
 	var msgRegEX = /(\w+?),(.+)/ ;
+	var policyRegEX = /^<policy\-file/ ;
 	var loginRegEX = /(.+?)~(.+)/;
 	var addr;
 	var isConnected = false;
@@ -217,8 +218,25 @@ function connection(socket,controller) {
 		//s.write('hello '+addr+"\0",'utf8',onWrite);
 	}
 
+	function policy(){
+	var xml = '<?xml version="1.0" encoding="utf-8"?>\n'
+	+ '<!DOCTYPE cross-domain-policy SYSTEM'
+          + ' "http://www.adobe.com/xml/dtds/cross-domain-policy.dtd">\n<cross-domain-policy>\n';
+  xml += '<site-control permitted-cross-domain-policies="all" />\n';
+  xml += '<allow-http-request-headers-from domain="*" headers="*" />\n';
+  xml += '<allow-access-from domain="*" secure="false" to-ports="*"/>\n';
+  xml += '</cross-domain-policy>\n';
+		return xml;
+	}
 	function onData(d)
 	{
+		if( policyRegEX.test(d) )
+		{
+			console.log("Received request for policy file");
+			var xml = policy();
+			console.log(xml);
+			s.write(xml,"utf8"); return;
+		}
 		var parts = msgRegEX.exec(d);
 		if(!parts){ console.log(addr+" INVALID "+d); return; }
 		console.log(addr+" "+parts[1]+" "+parts[2]);
