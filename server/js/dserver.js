@@ -242,7 +242,7 @@ function connection(socket,controller) {
 				}
 				//dl.memc.get('PLAYER_'+logins[1], function(err, response) {
 				db.users.find({username: logins[1]}, function(err,users){
-					if(err || !users){ // create user
+					if(err || !users || users.length < 1){ // create user
 						/*if(err.type!='NOT_FOUND'){
 						console.log('Login error');console.log(err);
 						send("0,Error fetching player");
@@ -264,9 +264,10 @@ function connection(socket,controller) {
 						//save user to mongodb
 						db.users.save({
 							username: logins[1],
-							pwd: logins[2]
+							pwd: logins[2],
 							pens: [],
 							stats: {
+								online: 1,
 								money: 0,
 								energy: 0,
 								last_logged: new Date()
@@ -280,6 +281,7 @@ function connection(socket,controller) {
 						dl.memc.set('QUEUE_'+logins[1],JSON.stringify([]),function(err,response){
 
 						});
+						send("1,Player logged in");
 						/*dl.memc.set('PLAYER_'+logins[1],JSON.stringify(player),function(err,response){
 						if(err){ console.log("error setting player info"); console.log(err); return; }
 						console.log("player saved");
@@ -295,7 +297,7 @@ function connection(socket,controller) {
 						console.log(users);
 						//var pstring = response['PLAYER_'+logins[1]];
 					  	//chkplayer = JSON.parse(pstring );
-					  	//console.log(chkplayer);
+					  	console.log(users);
 					  chkplayer = users[0];
 					  if(!chkplayer){
 						console.log("invalid json");
@@ -307,11 +309,12 @@ function connection(socket,controller) {
 						send("0,Invalid password");
 						return;
 					 }
-					 player = chkplayer;
+					 player = { user: chkplayer };
 					 console.log("Player loaded");
 					 send("1,Player logged in");
-					 chkplayer.stat.online = 1;
-					 chkplayer.stat.last_logged = new Date();
+					console.log(chkplayer);
+					 chkplayer.stats.online = 1;
+					 chkplayer.stats.last_logged = new Date();
 					 db.users.save(chkplayer);
 					 player.con = this;
 					 player.s = s;
