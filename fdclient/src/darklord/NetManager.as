@@ -1,6 +1,6 @@
 package darklord
 {
-	import com.facebook.graph.Facebook;
+	//import com.facebook.graph.Facebook;
 	
 	import darklord.Config;
 	import darklord.net.NetMSG;
@@ -22,9 +22,9 @@ package darklord
 	public class NetManager
 	{
 		private var xmlserver:XMLSocket;
-		private var eng:Engine;
+		private var eng:Engine2D;
 		public var isConnected:Boolean = false;
-		public const SERVERIP:String = "darklord.thegup.com";
+		public const SERVERIP:String = "ld24.thegup.com";
 		public const SERVERPORT:Number = 9001;
 		private var msgSplit:RegExp = /^(.+?),(.+?)$/ ;
 		private var conRE:RegExp = /^Hello/ ;
@@ -36,7 +36,7 @@ package darklord
 		
 		
 		
-		public function NetManager(engine:Engine):void
+		public function NetManager(engine:Engine2D):void
 		{
 			this.eng = engine;
 			userInfo = new Object();
@@ -47,16 +47,16 @@ package darklord
 		public function loginFB():void
 		{
 			trace("Initializing facebook app " );
-			Facebook.init(Config.FB_APP_ID, onFBInit);
+			//Facebook.init(Config.FB_APP_ID, onFBInit);
 			
 		}
 		public function onFBInit(result:Object, fail:Object):void
 		{
-			trace(onFBInit);
+			
 			if(result){
 				trace('logging into facebook');
 				var opts:Object = {scope:"publish_stream, user_photos"};
-				Facebook.login(onFBLogin, opts);
+				//Facebook.login(onFBLogin, opts);
 			}
 			else {
 				trace("Unable to initialize facebook app");

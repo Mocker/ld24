@@ -38,7 +38,7 @@ package darklord.states
 			this.name = "MenuState";
 		}
 		
-		override public function init(view:View3D):void
+		override public function init(view:View3D,params:*=null):void
 		{
 			super.init(view);
 			trace("Menu state initialized");

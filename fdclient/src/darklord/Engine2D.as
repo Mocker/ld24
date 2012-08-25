@@ -2,18 +2,12 @@ package darklord
 {
 	/**
 	 darklord.Engine
-	 * Main game engine for Dark Lord 
+	 * Main game engine
+	 * Uses FP for graphics/engine
 	 * handles game state stack, core scene/view objects
 	 * and passing render/update events through to current stack
 	 * **/
-	import away3d.cameras.*;
-	import away3d.containers.Scene3D;
-	import away3d.containers.View3D;
-	import away3d.controllers.*;
-	import away3d.debug.*;
-	import away3d.events.LoaderEvent;
-	import away3d.loaders.Loader3D;
-	import away3d.loaders.parsers.Parsers;
+
 	
 	import darklord.net.NetMSG;
 	import darklord.states.MenuState;
@@ -25,25 +19,25 @@ package darklord
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	
+	import org.flixel.FlxGame;
 	
-	public class Engine extends Sprite
+	public class Engine2D extends Sprite
 	{
 		private var states:Array = new Array();
-		private var scene:Scene3D;
-		private var view:View3D;
-		private var awayStats:AwayStats;
 		private var menu:MenuState;
 		public var net:NetManager;
 		
 		public const gameWidth:int = 800;
 		public const gameHeight:int = 600;
 
+		public var fGame:FlxGame;
 		
 		public function Engine():void
 		{
 			this.mouseChildren = true;
 			this.name = "game engine";
 			trace(this.name);
+			
 		}
 		
 		//init- create scene/view and first game state stack
@@ -51,19 +45,10 @@ package darklord
 		{
 			this.net = new NetManager(this);
 			this.net.connect();
+			trace("stage"); 
+//			stage.scaleMode = StageScaleMode.NO_SCALE;
+//			stage.align = StageAlign.TOP_LEFT;
 			
-			stage.scaleMode = StageScaleMode.NO_SCALE;
-			stage.align = StageAlign.TOP_LEFT;
-			
-			view = new View3D();
-			view.backgroundColor = 0x662222;
-			view.antiAlias = 4;
-			view.name = "3d view";
-			
-			addChild(view);
-			
-			awayStats = new AwayStats(view);
-			addChild(awayStats);
 			
 			initListeners();
 			initState();
@@ -73,21 +58,23 @@ package darklord
 		private function initState():void
 		{
 			menu = new MenuState(this);
-			menu.init(view);
+			menu.init();
 			states.push(menu);
 			
-			addChildAt(menu,1);
+			//this.fGame = new FlxGame(gameWidth, gameHeight, MenuState);
+			addChild(menu);
+			//addChildAt(menu,1);
 			
 		}
 			
 		private function initListeners():void
 		{
 			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-			stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+			this.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			this.addEventListener(MouseEvent.CLICK, onMouseClick);
-			stage.addEventListener(MouseEvent.MOUSE_UP, onMouseDown);
-			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+			this.addEventListener(MouseEvent.MOUSE_UP, onMouseDown);
+			this.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+			this.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 		}
 		
 		//run - enable game loop to run update/render
@@ -106,57 +93,58 @@ package darklord
 		// INPUT HANDLERS //
 		private function onMouseClick(ev:Event):void 
 		{
+			trace("Click!");
 			if(states.length < 1) return;
 			
-			(states[0] as GameState).onMouseClick(ev);
+			(states[0] as GameState2D).onMouseClick(ev);
 		}
 		private function onMouseUp(ev:Event):void 
 		{
 			if(states.length < 1) return;
-			(states[0] as GameState).onMouseUp(ev);
+			(states[0] as GameState2D).onMouseUp(ev);
 		}
 		private function onMouseDown(ev:Event):void 
 		{
 			if(states.length < 1) return;
-			(states[0] as GameState).onMouseDown(ev);
+			(states[0] as GameState2D).onMouseDown(ev);
 		}
 		
 		private function onKeyDown(ev:Event):void 
 		{
 			if(states.length < 1) return;
-			(states[0] as GameState).onKeyDown(ev);
+			(states[0] as GameState2D).onKeyDown(ev);
 		}
 		private function onKeyUp(ev:Event):void 
 		{
 			if(states.length < 1) return;
-			(states[0] as GameState).onKeyUp(ev);
+			(states[0] as GameState2D).onKeyUp(ev);
 		}
 		
 		//Network Events
-		public function onNetConnect(ev):void
+		public function onNetConnect(ev:*):void
 		{
 			trace("connected to the server!");
 			if(states.length < 1) return;
-			(states[0] as GameState).onNetConnect(ev);
+			(states[0] as GameState2D).onNetConnect(ev);
 		}
 		public function onNetMSG(ev:NetMSG):void
 		{
 			//trace(ev);
 			if(states.length < 1) return;
-			(states[0] as GameState).onNetMSG(ev);
+			(states[0] as GameState2D).onNetMSG(ev);
 		}
-		public function onNetClose(ev):void
+		public function onNetClose(ev:*):void
 		{
 			trace("Connection dropped");
 			if(states.length < 1) return;
-			(states[0] as GameState).onNetClose(ev);
+			(states[0] as GameState2D).onNetClose(ev);
 		}
-		public function onNetError(ev):void
+		public function onNetError(ev:*):void
 		{
 			trace("Network error!");
 			trace(ev);
 			if(states.length < 1) return;
-			(states[0] as GameState).onNetError(ev);
+			(states[0] as GameState2D).onNetError(ev);
 		}
 		
 		
@@ -165,7 +153,7 @@ package darklord
 		{
 			if(states.length < 1) return; //no states on the stack
 			var state = states[0]; //grab first state on the stack
-			var currentState:GameState = state as GameState;
+			var currentState:GameState2D = state as GameState2D;
 			
 			currentState.update();
 			currentState.render();

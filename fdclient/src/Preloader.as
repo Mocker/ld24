@@ -9,6 +9,8 @@ package
 	import flash.events.ProgressEvent;
 	import flash.utils.getDefinitionByName;
 	
+	import Evo;
+	
 	/**
 	 * ...
 	 * @author Ryan Guthrie
@@ -61,8 +63,10 @@ package
 		
 		private function startup():void 
 		{
-			var mainClass:Class = getDefinitionByName("Main") as Class;
-			addChild(new mainClass() as DisplayObject);
+			//var evoClass:Class = getDefinitionByName("Evo") as Class;
+			//addChild(new evoClass() as DisplayObject);
+			var evo:Evo = new Evo();
+			addChild(evo);
 		}
 		
 	}

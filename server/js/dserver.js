@@ -2,6 +2,9 @@ var fs = require('fs');
 var net = require('net');
 var mc = require('mc');
 var types = require('./types.js');
+var databaseUrl = "ld24"; // "username:password@example.com/mydb"
+var collections = ["users", "areas","pens","creatures"];
+var db = require("mongojs").connect(databaseUrl, collections);
 var dl = {} ; //global namespace to store.. everythiiing
 
 function main() {
@@ -106,7 +109,7 @@ function updatePlayersMobs(mob)
 		if(pc.mapX == mob.mapX && pc.mapY == mob.mapY){
 			var mobStr = JSON.stringify(mob);
 			pc.s.write(types.Messages.MOB_MOVE+','+mobStr+"\0",'utf8');
-			console.log("updated "+user);
+			
 		}
 	}
 	
@@ -237,13 +240,14 @@ function connection(socket,controller) {
 					console.log("username cant contain whitespace");
 					send("0,Username cannot contain spaces");
 				}
-				dl.memc.get('PLAYER_'+logins[1], function(err, response) {
-					if(err){ // create user
-						if(err.type!='NOT_FOUND'){
+				//dl.memc.get('PLAYER_'+logins[1], function(err, response) {
+				db.users.find({username: logins[1]}, function(err,users){
+					if(err || !users){ // create user
+						/*if(err.type!='NOT_FOUND'){
 						console.log('Login error');console.log(err);
 						send("0,Error fetching player");
 						return;
-						}
+						}*/
 						console.log('Creating Player '+logins[1]);
 						player = {
 						user: logins[1],
@@ -257,7 +261,26 @@ function connection(socket,controller) {
 						player.y = Math.floor(Math.random()*types.FakeMap[0].length);
 						dl.pcs[logins[1]] = player;
 					
-						dl.memc.set('PLAYER_'+logins[1],JSON.stringify(player),function(err,response){
+						//save user to mongodb
+						db.users.save({
+							username: logins[1],
+							pwd: logins[2]
+							pens: [],
+							stats: {
+								money: 0,
+								energy: 0,
+								last_logged: new Date()
+							}
+						},function(err,saved){
+							if(err || !saved) console.log("Unable to create user "+logins[1]);
+							else console.log("User "+logins[1]+" created and saved");
+
+						});
+						//add messaging queue for this player in memcache
+						dl.memc.set('QUEUE_'+logins[1],JSON.stringify([]),function(err,response){
+
+						});
+						/*dl.memc.set('PLAYER_'+logins[1],JSON.stringify(player),function(err,response){
 						if(err){ console.log("error setting player info"); console.log(err); return; }
 						console.log("player saved");
 						send("1,Player logged in");
@@ -265,14 +288,15 @@ function connection(socket,controller) {
 						player.s = s;
 						dl.pcs[player.user] = player;
 						console.log(dl.pcs);
-});
+						}); */
 
 					} else { //user loaded into response
 						console.log("Player found");
-						console.log(response);
-						var pstring = response['PLAYER_'+logins[1]];
-					  chkplayer = JSON.parse(pstring );
-					  console.log(chkplayer);
+						console.log(users);
+						//var pstring = response['PLAYER_'+logins[1]];
+					  	//chkplayer = JSON.parse(pstring );
+					  	//console.log(chkplayer);
+					  chkplayer = users[0];
 					  if(!chkplayer){
 						console.log("invalid json");
 						send("0,player data invalid");
@@ -286,6 +310,9 @@ function connection(socket,controller) {
 					 player = chkplayer;
 					 console.log("Player loaded");
 					 send("1,Player logged in");
+					 chkplayer.stat.online = 1;
+					 chkplayer.stat.last_logged = new Date();
+					 db.users.save(chkplayer);
 					 player.con = this;
 					 player.s = s;
 					 if(player.mapX == undefined){

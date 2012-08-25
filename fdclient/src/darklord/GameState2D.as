@@ -10,45 +10,38 @@ package darklord
 	 * 
 	 * */
 	
-	import away3d.containers.Scene3D;
-	import away3d.containers.View3D;
 	
 	import darklord.net.NetMSG;
+	
 	
 	import flash.display.Sprite;
 	import flash.events.DataEvent;
 	import flash.events.Event;
 
+	import org.flixel.FlxState;
 		
-	public class GameState extends Sprite
+	public class GameState2D extends Sprite
 	{
-		private var scene:Scene3D;
-		private var view:View3D;
-		public var eng:Engine;
-		public function GameState(engine:Engine):void
+		public var eng:Engine2D;
+		public function GameState2D(engine:Engine2D):void
 		{
 			super();
 			this.eng = engine;
-			this.mouseEnabled = true;
-			this.mouseChildren = true;
-			this.name = "game state";
 		}
 		
-		public function init(view:View3D):void
+		public function init():void
 		{
-			this.scene = view.scene;
-			this.view = view;
 		}
 		
 		
 		public function update():void
 		{
-			
+				
 		}
 		
 		public function render():void
 		{
-			view.render();
+			
 		}
 		
 		
@@ -86,11 +79,11 @@ package darklord
 		{
 			
 		}
-		public function onNetClose(ev):void
+		public function onNetClose(ev:*):void
 		{
 			
 		}
-		public function onNetError(ev):void
+		public function onNetError(ev:*):void
 		{
 			
 		}

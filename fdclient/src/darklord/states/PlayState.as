@@ -1,9 +1,8 @@
 package darklord.states
 {
-	import away3d.containers.View3D;
 	
-	import darklord.Engine;
-	import darklord.GameState;
+	import darklord.Engine2D;
+	import darklord.GameState2D;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -15,7 +14,7 @@ package darklord.states
 	import flash.text.*;
 	import flash.utils.*;
 	
-	public class PlayState extends GameState
+	public class PlayState extends GameState2D
 	{
 		
 		
@@ -27,9 +26,9 @@ package darklord.states
 		}
 		
 		
-		override public function init(view):void 
+		override public function init():void 
 		{
-			super.init(view);
+			super.init();
 		}
 		
 		override public function onMouseClick(ev:Event):void

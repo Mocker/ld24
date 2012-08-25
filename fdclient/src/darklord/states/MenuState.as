@@ -1,10 +1,10 @@
 package darklord.states
 {
-	import away3d.containers.View3D;
+	
 	
 	import darklord.Alert;
-	import darklord.Engine;
-	import darklord.GameState;
+	import darklord.Engine2D;
+	import darklord.GameState2D;
 	import darklord.net.NetMSG;
 	
 	import flash.display.Bitmap;
@@ -18,10 +18,9 @@ package darklord.states
 	import flash.text.*;
 	import flash.utils.*;
 	
-	public class MenuState extends GameState
+	public class MenuState extends GameState2D
 	{
-		[Embed(source="../assets/crap/title.png")]
-		private var TitleGFX:Class;
+		
 		
 		private var userTXT:TextField = new TextField();
 		private var passTXT:TextField = new TextField();
@@ -32,15 +31,14 @@ package darklord.states
 		public var status:String = "menu";
 		private var alert:Alert;
 		
-		public function MenuState(engine:Engine)
+		public function MenuState(engine:Engine2D)
 		{
 			super(engine);
-			this.name = "MenuState";
 		}
 		
-		override public function init(view:View3D):void
+		override public function init():void
 		{
-			super.init(view);
+			super.init();
 			trace("Menu state initialized");
 			
 			var bgRect:Sprite = new Sprite();
@@ -49,7 +47,7 @@ package darklord.states
 			bgRect.graphics.drawRect(0,0, this.eng.gameWidth, this.eng.gameHeight);
 			this.addChild(bgRect);
 			
-			var titleBMP:Bitmap = new TitleGFX(); titleBMP.alpha = 0.5;
+			//var titleBMP:Bitmap = new TitleGFX(); titleBMP.alpha = 0.5;
 			//bgRect.graphics.beginBitmapFill(titleBMP.bitmapData);
 			//bgRect.graphics.drawRect(0,0, this.eng.gameWidth, this.eng.gameHeight);
 			
