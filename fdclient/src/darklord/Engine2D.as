@@ -30,13 +30,13 @@ package darklord
 		public const gameWidth:int = 800;
 		public const gameHeight:int = 600;
 
-		public var fGame:FlxGame;
+		
 		
 		public function Engine():void
 		{
 			this.mouseChildren = true;
+			this.mouseEnabled = true;
 			this.name = "game engine";
-			trace(this.name);
 			
 		}
 		
@@ -89,11 +89,31 @@ package darklord
 			
 		}
 		
+		/*
+		 * pop the top state and go to the next one
+		 * */
+		public function popState():void {
+			
+		}
+		
+		/*
+		 * load a new state specified by state class name onto top of stack
+		 * note: does not remove previous state
+		 * */
+		public function loadState(stateName:Class):void 
+		{
+			var newState = new stateName(this);
+			//var state:* = states[0]; //grab first state on the stack
+			//this.removeChild(state);
+			this.addChild(newState);
+			newState.init();
+			states.push(newState);
+		}
+		
 		
 		// INPUT HANDLERS //
 		private function onMouseClick(ev:Event):void 
 		{
-			trace("Click!");
 			if(states.length < 1) return;
 			
 			(states[0] as GameState2D).onMouseClick(ev);
@@ -152,7 +172,7 @@ package darklord
 		private function onEnterFrame(ev:Event):void 
 		{
 			if(states.length < 1) return; //no states on the stack
-			var state = states[0]; //grab first state on the stack
+			var state:* = states[0]; //grab first state on the stack
 			var currentState:GameState2D = state as GameState2D;
 			
 			currentState.update();

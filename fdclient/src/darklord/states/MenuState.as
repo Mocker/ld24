@@ -43,7 +43,7 @@ package darklord.states
 			
 			var bgRect:Sprite = new Sprite();
 			bgRect.name="bgRect";
-			bgRect.graphics.beginGradientFill(GradientType.LINEAR, [0x000000, 0x440000], [1,1],[0,155]);
+			bgRect.graphics.beginGradientFill(GradientType.RADIAL, [0xcccccc, 0xccccff], [1,1],[200,250]);
 			bgRect.graphics.drawRect(0,0, this.eng.gameWidth, this.eng.gameHeight);
 			this.addChild(bgRect);
 			
@@ -54,7 +54,7 @@ package darklord.states
 			var titleText:TextField = new TextField();
 			var titleFormat:TextFormat = new TextFormat("null",50,0xffffff,true);
 			titleText.defaultTextFormat = titleFormat;
-			titleText.text = "Dark Lord";
+			titleText.text = "EvolveyThingyGamey";
 			titleText.width = 300;
 			//titleText.textColor = 0xffffff;
 			titleText.x = this.eng.gameWidth/2 - 100;
@@ -214,7 +214,8 @@ package darklord.states
 					else alert.show(msg.dataEvent.data);
 					break;
 				case NetMSG.MSG_LOGGEDIN:
-					statusTXT.text = "Logged in as "+eng.net.userInfo['username'];
+					statusTXT.text = "Logged in as " + eng.net.userInfo['username'];
+					this.eng.loadState(PlayState);
 					break;
 				default:
 					trace('not sure how to handle this..');

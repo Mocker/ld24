@@ -3,6 +3,7 @@ package darklord.states
 	
 	import darklord.Engine2D;
 	import darklord.GameState2D;
+	import darklord.net.NetMSG;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -19,7 +20,7 @@ package darklord.states
 		
 		
 		
-		public function PlayState(engine:Engine)
+		public function PlayState(engine:Engine2D)
 		{
 			super(engine);
 			this.name = "PlayState";
@@ -29,6 +30,18 @@ package darklord.states
 		override public function init():void 
 		{
 			super.init();
+			initBG();
+		}
+		
+		private function initBG():void
+		{
+			var bgRect:Sprite = new Sprite();
+			bgRect.name="bgRect";
+			bgRect.graphics.beginGradientFill(GradientType.RADIAL, [0xcccccc, 0xccccff], [1,1],[200,250]);
+			bgRect.graphics.drawRect(0,0, this.eng.gameWidth, this.eng.gameHeight);
+			this.addChild(bgRect);
+			
+			
 		}
 		
 		override public function onMouseClick(ev:Event):void
@@ -46,5 +59,10 @@ package darklord.states
 			
 		}
 		
+		override public function onNetMSG(msg:NetMSG):void
+		{
+			//alert.show(msg.dataEvent.data);
+			trace("msg code: " + msg.code + " : " + msg.msg);
+		}
 	}
 }

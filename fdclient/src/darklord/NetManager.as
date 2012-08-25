@@ -133,7 +133,9 @@ package darklord
 			var matches:Array = msgSplit.exec(ev.data);
 			//var msg:NetMSG
 			if(matches && matches.length > 2){ eng.onNetMSG(new NetMSG(matches[1],matches[2],ev) ); }
-			else { eng.onNetMSG( new NetMSG(0,null,ev) ); }
+			else {
+				trace("net msg wrong format: " + ev.data);
+				eng.onNetMSG( new NetMSG(0,null,ev) ); }
 		}
 		
 		private function onSocketClose(ev:Event):void
