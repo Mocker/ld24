@@ -108,7 +108,7 @@ function updatePlayersMobs(mob)
 		var pc = dl.pcs[user];
 		if(pc.mapX == mob.mapX && pc.mapY == mob.mapY){
 			var mobStr = JSON.stringify(mob);
-			pc.s.write(types.Messages.MOB_MOVE+','+mobStr+"\0",'utf8');
+			if(pc.s) pc.s.write(types.Messages.MOB_MOVE+','+mobStr+"\0",'utf8');
 			
 		}
 	}
