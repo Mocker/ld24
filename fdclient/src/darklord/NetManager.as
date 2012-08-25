@@ -97,6 +97,7 @@ package darklord
 		
 		public function connect():void
 		{
+			Security.loadPolicyFile("ld24.thegup.com/crossdomain.xml");
 			xmlserver = new XMLSocket(SERVERIP,SERVERPORT);
 			xmlserver.addEventListener(Event.CONNECT, onConnect);  
 			xmlserver.addEventListener(IOErrorEvent.IO_ERROR, onError);
